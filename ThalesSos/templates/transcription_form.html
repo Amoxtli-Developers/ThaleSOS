@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Audio Transcription</title>
+</head>
+<body>
+    <h1>Transcribe Audio</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="audio_file">Choose an audio file:</label>
+        <input type="file" name="audio_file" accept=".wav, .mp3">
+        <input type="submit" value="Transcribe">
+    </form>
+</body>
+</html>
