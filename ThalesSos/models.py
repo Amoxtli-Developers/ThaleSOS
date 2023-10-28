@@ -12,3 +12,10 @@ class Categorie(models.Model):
     name = models.CharField(max_length=100)
     message = models.CharField(max_length=100)
 
+class Resume(models.Model):
+    id = models.AutoField(primary_key=True)
+    message = models.CharField(max_length=100)
+    var_Y = models.CharField(max_length=100)
+    var_X = models.CharField(max_length=100)
+    finalMessage = models.CharField(max_length=100)
+
