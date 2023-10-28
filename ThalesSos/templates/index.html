@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thales SOS</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a
+        class="navbar-brand"
+        href="#"
+        style="
+          font-family: Poppins;
+          font-weight: 700;
+          font-size: 45px;
+          color: #242f73;
+        "
+        >Thales<span
+          style="
+            font-family: Poppins;
+            font-weight: 700;
+            font-size: 30px;
+            color: #04c4d9;
+          "
+        >
+          SOS</span
+        ></a
+      >
+    </nav>
+
+    <div class="container-fluid mt-5">
+      <div class="row">
+        <div class="col-md-3">
+          <div
+            class="card"
+            style="border-radius: 30px; border: 3px solid #242f73"
+          >
+            <div class="card-body">
+              <h5 class="card-title text-center">Selecciona tu llamada</h5>
+              <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                  <label for="selected_audio"
+                    >Selecciona tu archivo de audio:</label
+                  >
+                  <select
+                    name="selected_audio"
+                    id="selected_audio"
+                    class="form-control"
+                  >
+                    <option value="" disabled selected>
+                      Selecciona un archivo
+                    </option>
+                    {% for audio_path in audio_paths %}
+                    <option value="{{ audio_path }}">{{ audio_path }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                
+                <audio id="audioPlayer" controls>
+                  Tu navegador no soporta el elemento audio.
+                </audio>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  onclick="playAudio()"
+                >
+                  Play
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Columna de Speech to Text -->
+        <div class="col-md-6">
+          <div
+            class="card"
+            style="border-radius: 30px; border: 3px solid #242f73"
+          >
+            <div class="card-body">
+              <h5 class="card-title text-center">{{ data }}</h5>
+            </div>
+          </div>
+        </div>
+
+        <!-- Columna de Alerta y Gráfica -->
+        <div class="col-md-3">
+          <div class="text-center">
+            <div class="p-4 border rounded-circle">Gráfica de emociones</div>
+          </div>
+
+          <!-- Parámetros de voz -->
+          <ul class="list-group mt-3">
+            <li class="list-group-item">Velocidad:</li>
+            <li class="list-group-item">Tono</li>
+            <li class="list-group-item">Emoción principal:</li>
+          </ul>
+
+          <!-- Botón Finalizar llamada -->
+          <div class="text-center mt-4">
+            <button
+              class="btn"
+              style="border-radius: 30px; border: 3px solid #04c4d9"
+            >
+              <span style="margin: 1rem">Finalizar llamada</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function playAudio() {
+        const selectedAudio = document.getElementById("selected_audio");
+        const audioPlayer = document.getElementById("audioPlayer");
+        if (selectedAudio.value) {
+          // Set the src attribute of the audio element to the selected audio file
+          audioPlayer.src = selectedAudio.value;
+          audioPlayer.play(); // Play the audio
+        }
+      }
+    </script>
+
+    <!-- Scripts necesarios para Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+</html>
