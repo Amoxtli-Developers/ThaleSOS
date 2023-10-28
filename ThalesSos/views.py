@@ -13,6 +13,8 @@ audio_paths = [
 
 def home(request):
     data = ""  # Initialize the data variable with an empty string
+    alert_message = None  # Initialize alert_message as None
+    
     if request.method == 'POST':
         selected_audio_path = request.POST.get('selected_audio')
         if selected_audio_path:
@@ -26,10 +28,11 @@ def home(request):
             if transcript is not None:
                 data = transcript  # Assign the transcript to the data variable
             else:
-                return HttpResponse("Transcription failed.")
+                alert_message = "Transcription failed."
         else:
-            return HttpResponse("No audio file selected.")
-    return render(request, 'index.html', {'data': data, 'audio_paths': audio_paths})
+            alert_message = "Ningun archivo seleccionado"
+
+    return render(request, 'index.html', {'data': data, 'audio_paths': audio_paths, 'alert_message': alert_message})
 
 
 def transcribe_google(request):
