@@ -21,7 +21,7 @@ def home(request):
     if request.method == 'POST':
         selected_audio_path = request.POST.get('selected_audio')
         if selected_audio_path:
-            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/Users/sofiadonlucas/Downloads/imperial-data-403319-ab8beada07d0.json'
+            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/Users/salomon/Desktop/imperial-data-403319-ab8beada07d0.json'
 
             with open(selected_audio_path, 'rb') as audio_file:
                 # Encode the audio data as base64
