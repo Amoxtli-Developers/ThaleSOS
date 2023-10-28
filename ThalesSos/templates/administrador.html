@@ -253,6 +253,7 @@
             $('#edited-category').show();
             $("#dashboardContent2").hide();
             $("#dashboardContent").hide();
+            $('#edited-warning').hide();
             // Aquí puedes agregar código adicional para prellenar el formulario con información
             // Por ejemplo, puedes obtener el ID de la categoría con $(this).data('id')
             // Obtener el ID de la categoría del botón clicado
@@ -277,6 +278,7 @@
         $('#edited-warning').show();
         $("#dashboardContent2").hide();
         $("#dashboardContent").hide();
+        $('#edited-category').hide();
 
         let id = $(this).data("id");
         let keywords = $(this).data("keywords");
@@ -300,6 +302,7 @@
             $("#dashboardContent").show(); // Muestra el contenido de dashboardContent
             $("#dashboardContent2").hide(); // Oculta el contenido de dashboardContent2
             $('#edited-category').hide();
+            $('#edited-warning').hide();
         });
 
         // Al hacer clic en "Agregar identificadores"
@@ -307,6 +310,7 @@
             $("#dashboardContent2").show(); // Muestra el contenido de dashboardContent2
             $("#dashboardContent").hide(); // Oculta el contenido de dashboardContent
             $('#edited-category').hide();
+            $('#edited-warning').hide();
         });
     });
 </script>

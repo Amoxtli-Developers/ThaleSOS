@@ -15,7 +15,22 @@ audio_paths = [
     'ThalesSos/audios/Voz 001.wav',
     'ThalesSos/audios/Voz 002.wav',
     'ThalesSos/audios/Tecnológico de Monterrey - Campus Ciudad de México 2.wav',
-    'ThalesSos/audios/Tecnológico de Monterrey - Campus Ciudad de México 4.wav'
+    'ThalesSos/audios/Tecnológico de Monterrey - Campus Ciudad de México 4.wav',
+    'ThalesSos/audios/WhatsApp Audio 2023-10-28 at 06.28.51 (1) (2).wav',
+    'ThalesSos/audios/WhatsApp Audio 2023-10-28 at 06.28.51 (2) (1).wav',
+    'ThalesSos/audios/WhatsApp Audio 2023-10-28 at 06.28.51 (3).wav',
+    'ThalesSos/audios/WhatsApp Audio 2023-10-28 at 06.28.53 (1).wav',
+    'ThalesSos/audios/WhatsApp Audio 2023-10-28 at 06.28.54 (1).wav',
+    'ThalesSos/audios/WhatsApp Audio 2023-10-28 at 06.28.54.wav',
+    'ThalesSos/audios/WhatsApp Audio 2023-10-28 at 06.28.55.wav',
+    'ThalesSos/audios/WhatsApp Audio 2023-10-28 at 06.28.57.wav',
+    'ThalesSos/audios/7a.wav',
+    'ThalesSos/audios/1a.wav',
+    'ThalesSos/audios/2a.wav',
+    'ThalesSos/audios/3a.wav',
+    'ThalesSos/audios/4a.wav',
+    'ThalesSos/audios/5a.wav',
+    'ThalesSos/audios/6a.wav',
 ]
 
 def home(request):
@@ -29,7 +44,7 @@ def home(request):
     if request.method == 'POST':
         selected_audio_path = request.POST.get('selected_audio')
         if selected_audio_path:
-            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'C:/Users/isaac/Downloads/imperial-data-403319-ab8beada07d0.json'
+            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/Users/sofiadonlucas/Downloads/imperial-data-403319-ab8beada07d0.json'
             data_emotion = query(selected_audio_path)
             print(data_emotion)
             top1 = data_emotion[0]
@@ -85,12 +100,17 @@ def home(request):
     'audio_paths': audio_paths,
     'alert_message': alert_message,
     'keywords_json': json.dumps(list(keywords)),
+    'keywords_to_category': json.dumps(keywords_to_category),
+    'name_to_message': json.dumps(name_to_message),
     'data_emotion': data_emotion,
     'model_init': model_init,
     'dataGraf': dataGraf,
     'variable_x': variable_x,
     'variable_y': variable_y,
-}
+    }
+    
+    
+
 
     return render(request, 'index.html', context)
     

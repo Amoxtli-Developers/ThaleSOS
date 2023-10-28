@@ -234,11 +234,11 @@
         </div>
       </div>
       
-      <div class="row" style="margin-top: 5rem">
+      <div class="row pl-3 pr-3" style="margin-top: 5rem">
         <!-- Columna de Alerta y Gráfica -->
-        <div style="border-radius: 30px; border: 3px solid #242f73" class="col-md-6">
-          <div class="text-center">
-            <div>Gráfica de emociones</div>
+        <div style="border-radius: 30px; border: 3px solid #242f73;" class="col-md-12">
+          <div class="text-center pt-4">
+            <div><h5 class="card-title text-center">Gráfica de emociones</h5></div>
             <div id="chart_div"></div>
           </div>
         </div>
@@ -277,12 +277,12 @@
                 chart.draw(data, options);
               }
             </script>
-
+            <!--
             <li class="list-group-item">
               Velocidad:<a>{{variable_y}}{{variable_x}}</a>
             </li>
             <li class="list-group-item">Tono</li>
-            <li class="list-group-item">{{data_emotion}}</li>
+            <li class="list-group-item">{{data_emotion}}</li>-->
           </ul>
 
           <!-- Botón Finalizar llamada -->
@@ -299,7 +299,7 @@
             font-weight: 500;
           "
         >
-          <span style="margin: 1rem">Finalizar llamada</span>
+          <span class="pb-5" style="margin: 1rem">Finalizar llamada</span>
         </a>
       </div>
     </div>
@@ -381,6 +381,11 @@ for (const word of wordsToDetect) {
             categoryCounts[category] = (categoryCounts[category] || 0) + 1;
             seenWords.add(word.toLowerCase());
         }
+        if (category == 'pop1'){
+          return `<span style="background-color: green; color: white;">${match}</span>`;
+        }else if (category == 'pop2'){
+              return `<span style="background-color: blue; color: white;">${match}</span>`;
+            }
         return `<span style="background-color: yellow;">${match}</span>`;
     });
 }
@@ -455,6 +460,11 @@ function highlightKeywords(text) {
                 categoryCounts[category] = (categoryCounts[category] || 0) + 1;
                 seenWords.add(word.toLowerCase());  // Añadir la palabra al conjunto de palabras vistas
             }
+            if (category == 'pop1'){
+              return `<span style="background-color: green; color: white;">${match}</span>`;
+            } else if (category == 'pop2'){
+              return `<span style="background-color: blue; color: white;">${match}</span>`;
+            }
             return `<span style="background-color: yellow;">${match}</span>`;
         });
     }
@@ -479,7 +489,7 @@ function highlightKeywords(text) {
         var infoModal = new bootstrap.Modal(document.getElementById('infoModal'));
         infoModal.show();
     }else{
-      document.getElementById('modalContent').textContent = `Palabra clave identificada`;
+      var message = nameToMessage[topCategory];
     }
 
     return text;
