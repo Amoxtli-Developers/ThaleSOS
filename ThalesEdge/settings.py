@@ -26,7 +26,11 @@ SECRET_KEY = 'django-insecure-=r(-46h8bvb*kp*67i87!7vbnaf*=6mx7(8#4mu&^g@(3b*4kb
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # Application definition
 

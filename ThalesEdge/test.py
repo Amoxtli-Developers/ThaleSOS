@@ -1,59 +1,28 @@
+
 from django.http import HttpResponse
 from django.shortcuts import render
-import json
 from .audio_transcription import transcribe_audio  # Importando la función de transcripción
-from .speech_emotion import query
 import os  # Import the os module
 from .models import Categorie, Warning
 from django.shortcuts import redirect, get_object_or_404
 from django.http import JsonResponse
-import matplotlib.pyplot as plt
 
 import base64
 
 audio_paths = [
     'ThalesSos/audios/Voz 001.wav',
     'ThalesSos/audios/Voz 002.wav',
-    'ThalesSos/audios/Tecnológico de Monterrey - Campus Ciudad de México 2.wav',
-    'ThalesSos/audios/Tecnológico de Monterrey - Campus Ciudad de México 4.wav'
 ]
 
 def home(request):
     data = ""  # Initialize the data variable with an empty string
     alert_message = None  # Initialize alert_message as None
-    data_emotion = ''
-    dataGraf = ''
-    model_init = query('ThalesSos/audios/Voz 001.wav')
     
     
     if request.method == 'POST':
         selected_audio_path = request.POST.get('selected_audio')
         if selected_audio_path:
-            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'C:/Users/isaac/Downloads/imperial-data-403319-ab8beada07d0.json'
-            data_emotion = query(selected_audio_path)
-            print(data_emotion)
-            top1 = data_emotion[0]
-            top2 = data_emotion[1]
-            top3 = data_emotion[2]
-            print(top1)  # Esto imprimirá 10
-            print(top2)  # Esto imprimirá 10
-            print(top3)
-            dataGraf = [top1, top2, top3]
-            print(dataGraf)
-
-            labels= [top1['label'], top2['label'], top3['label']]
-            scores = [top1['score'], top2['score'], top3['score']]
-
-            print(labels)
-            print(scores)
-            variable_x = labels
-            variable_y = scores
-            variable_y = [int(x * 100) for x in variable_y]
-            variable_x = json.dumps(variable_x)
-            print("despues de  dumps",variable_x)
-            
-
-             
+            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'C:/Users/chang/OneDrive/Tec/Hack/Hackathon/imperial-data-403319-ab8beada07d0.json'
 
             with open(selected_audio_path, 'rb') as audio_file:
                 # Encode the audio data as base64
@@ -66,34 +35,8 @@ def home(request):
                 alert_message = "Transcription failed."
         else:
             alert_message = "Ningun archivo seleccionado"
-    else:
-    
-        variable_x = []  # Provide default values for variable_x and variable_y
-        variable_y = []
-        variable_y = [int(x * 100) for x in variable_y]
-        variable_x = json.dumps(variable_x)
-        print("despues de  dumps",variable_x)
-    # Obtener todas las palabras clave
-    keywords = Warning.objects.values_list('keywords', flat=True)
-    warnings = Warning.objects.all().select_related('category')
-    categories = Categorie.objects.all()
-    name_to_message = {category.name: category.message for category in categories}
-    keywords_to_category = {warning.keywords: warning.category.name for warning in warnings}
-    
-    context = {
-    'data': data,
-    'audio_paths': audio_paths,
-    'alert_message': alert_message,
-    'keywords_json': json.dumps(list(keywords)),
-    'data_emotion': data_emotion,
-    'model_init': model_init,
-    'dataGraf': dataGraf,
-    'variable_x': variable_x,
-    'variable_y': variable_y,
-}
 
-    return render(request, 'index.html', context)
-    
+    return render(request, 'index.html', {'data': data, 'audio_paths': audio_paths, 'alert_message': alert_message})
 
 def administrador(request):
     categories = Categorie.objects.all()
