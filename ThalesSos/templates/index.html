@@ -22,6 +22,10 @@
       .btn-interfaz:hover {
         background-color: #04c4d9;
       }
+
+      .btn-stop:hover {
+        background-color: red;
+      }
     </style>
   </head>
   <body>
@@ -75,7 +79,7 @@
 
     <div class="container-fluid mt-5">
       <div class="row">
-        <div class="col-md-5">
+        <div class="col-md-6">
           <div
             class="card"
             style="border-radius: 30px; border: 3px solid #242f73"
@@ -124,17 +128,48 @@
             </div>
           </div>
         </div>
-
-        <!-- Columna de Speech to Text -->
-        <div class="col-md-7">
+        <div class="col-md-6">
           <div
             class="card"
             style="border-radius: 30px; border: 3px solid #242f73"
           >
             <div class="card-body">
-              <p class="card-title text-justify">
-                {{ data|default_if_none:"Placeholder Text" }}
-              </p>
+              <h5 class="card-title text-center">Dictado de Voz</h5>
+              <textarea id="output" class="form-control" rows="8" readonly>
+{{ data }}</textarea
+              >
+              <div class="row">
+                <div class="col-md-6">
+                  <button
+                    onclick="startRecognition()"
+                    class="btn btn-block mt-2 btn-interfaz"
+                    style="
+                      border-radius: 30px;
+                      border: 3px solid #04c4d9;
+                      margin-top: 2rem;
+                      color: #242f73;
+                      font-weight: 500;
+                    "
+                  >
+                    Iniciar Dictado
+                  </button>
+                </div>
+                <div class="col-md-6">
+                  <button
+                    onclick="stopRecognition()"
+                    class="btn btn-block mt-2 btn-stop"
+                    style="
+                      border-radius: 30px;
+                      border: 3px solid red;
+                      margin-top: 2rem;
+                      color: #242f73;
+                      font-weight: 500;
+                    "
+                  >
+                    Detener Dictado
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -158,7 +193,7 @@
           <!-- Botón Finalizar llamada -->
         </div>
       </div>
-      <div class="text-center" style="margin-top: 5rem;">
+      <div class="text-center" style="margin-top: 5rem">
         <button
           class="btn btn-interfaz"
           style="
@@ -175,11 +210,57 @@
     <!-- Bootstrap Alert -->
 
     <script>
+      // Comprueba si el navegador soporta el reconocimiento de voz
+      window.SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      if (window.SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.interimResults = true; // Para resultados intermedios
+        recognition.lang = "es-ES"; // Establece el idioma a español
+        let isListening = false;
+
+        recognition.onend = function () {
+          if (isListening) {
+            recognition.start();
+          }
+        };
+
+        let fullTranscript = ""; // Almacena la transcripción completa
+
+        recognition.onresult = function (event) {
+          let interimTranscript = ""; // Almacena la transcripción temporal
+
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            const transcript = event.results[i][0].transcript;
+            if (event.results[i].isFinal) {
+              fullTranscript += transcript + " "; // Añade a la transcripción completa
+            } else {
+              interimTranscript += transcript; // Añade a la transcripción temporal
+            }
+          }
+
+          document.getElementById("output").textContent =
+            fullTranscript + interimTranscript; // Muestra la combinación
+        };
+
+        function startRecognition() {
+          isListening = true;
+          recognition.start();
+        }
+
+        function stopRecognition() {
+          isListening = false;
+          recognition.stop();
+        }
+      } else {
+        alert("Tu navegador no soporta el reconocimiento de voz.");
+      }
+
       function playAudio() {
         const selectedAudio = document.getElementById("selected_audio");
         const audioPlayer = document.getElementById("audioPlayer");
         if (selectedAudio.value) {
-          // Set the src attribute of the audio element to the selected audio file
           audioPlayer.src = selectedAudio.value;
           audioPlayer.play(); // Play the audio
         }
