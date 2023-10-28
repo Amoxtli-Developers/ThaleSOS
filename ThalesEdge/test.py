@@ -1,12 +1,11 @@
+
 from django.http import HttpResponse
 from django.shortcuts import render
 from .audio_transcription import transcribe_audio  # Importando la función de transcripción
-from .speech_emotion import query
 import os  # Import the os module
 from .models import Categorie, Warning
 from django.shortcuts import redirect, get_object_or_404
 from django.http import JsonResponse
-import matplotlib.pyplot as plt
 
 import base64
 
@@ -18,34 +17,12 @@ audio_paths = [
 def home(request):
     data = ""  # Initialize the data variable with an empty string
     alert_message = None  # Initialize alert_message as None
-    data_emotion = ''
-    dataGraf = ''
-    model_init = query('ThalesSos/audios/Voz 001.wav')
     
     
     if request.method == 'POST':
         selected_audio_path = request.POST.get('selected_audio')
         if selected_audio_path:
-            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'C:/Users/isaac/Downloads/imperial-data-403319-ab8beada07d0.json'
-            data_emotion = query(selected_audio_path)
-            top1 = data_emotion[0]
-            top2 = data_emotion[1]
-            top3 = data_emotion[2]
-            print(top1)  # Esto imprimirá 10
-            print(top2)  # Esto imprimirá 10
-            print(top3)
-            dataGraf = [top1, top2, top3]
-            print(dataGraf)
-
-            labels = [top1['label'], top2['label'], top3['label']]
-            scores = [top1['score'], top2['score'], top3['score']]
-
-            print(labels)
-            print(scores)
-
-            
-
-             
+            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'C:/Users/chang/OneDrive/Tec/Hack/Hackathon/imperial-data-403319-ab8beada07d0.json'
 
             with open(selected_audio_path, 'rb') as audio_file:
                 # Encode the audio data as base64
@@ -59,7 +36,7 @@ def home(request):
         else:
             alert_message = "Ningun archivo seleccionado"
 
-    return render(request, 'index.html', {'data': data, 'audio_paths': audio_paths, 'alert_message': alert_message, 'data_emotion': data_emotion, 'model_init': model_init, 'dataGraf': dataGraf	})
+    return render(request, 'index.html', {'data': data, 'audio_paths': audio_paths, 'alert_message': alert_message})
 
 def administrador(request):
     categories = Categorie.objects.all()
