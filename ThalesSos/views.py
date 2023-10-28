@@ -30,6 +30,7 @@ def home(request):
         if selected_audio_path:
             os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'C:/Users/isaac/Downloads/imperial-data-403319-ab8beada07d0.json'
             data_emotion = query(selected_audio_path)
+            print(data_emotion)
             top1 = data_emotion[0]
             top2 = data_emotion[1]
             top3 = data_emotion[2]
@@ -46,6 +47,7 @@ def home(request):
             print(scores)
             variable_x = labels
             variable_y = scores
+            variable_y = [int(x * 100) for x in variable_y]
             variable_x = json.dumps(variable_x)
             print("despues de  dumps",variable_x)
             
@@ -67,6 +69,7 @@ def home(request):
     
         variable_x = []  # Provide default values for variable_x and variable_y
         variable_y = []
+        variable_y = [int(x * 100) for x in variable_y]
         variable_x = json.dumps(variable_x)
         print("despues de  dumps",variable_x)
     # Obtener todas las palabras clave
