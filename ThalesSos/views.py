@@ -5,6 +5,38 @@ import os  # Import the os module
 from .models import Categorie, Warning
 from django.shortcuts import redirect, get_object_or_404
 
+import base64
+
+audio_paths = [
+    'ThalesSos/audios/prueba.wav',
+    'ThalesSos/audios/prueba.wav',
+    'ThalesSos/audios/prueba.wav',
+]
+
+def home(request):
+    data = ""  # Initialize the data variable with an empty string
+    alert_message = None  # Initialize alert_message as None
+    
+    if request.method == 'POST':
+        selected_audio_path = request.POST.get('selected_audio')
+        if selected_audio_path:
+            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/Users/salomon/Desktop/imperial-data-403319-ab8beada07d0.json'
+
+            with open(selected_audio_path, 'rb') as audio_file:
+                # Encode the audio data as base64
+                audio_data = base64.b64encode(audio_file.read()).decode('utf-8')
+
+            transcript = transcribe_audio(audio_data)  # Pass the base64-encoded audio data
+            if transcript is not None:
+                data = transcript  # Assign the transcript to the data variable
+            else:
+                alert_message = "Transcription failed."
+        else:
+            alert_message = "Ningun archivo seleccionado"
+
+    return render(request, 'index.html', {'data': data, 'audio_paths': audio_paths, 'alert_message': alert_message})
+
+
 def transcribe_google(request):
     if request.method == 'POST':
         audio_file = request.FILES.get('audio_file')
@@ -103,6 +135,3 @@ def update_warning(request):
 
     # Si no es POST, mostrar el formulario o cualquier otra vista.
     return render(request, 'administrador.html', {})
-
-def home(request):
-      return render(request, 'home.html')
