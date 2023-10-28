@@ -6,9 +6,8 @@ import os  # Import the os module
 import base64
 
 audio_paths = [
-    'ThalesSos/audios/prueba.wav',
-    'ThalesSos/audios/prueba.wav',
-    'ThalesSos/audios/prueba.wav',
+    'ThalesSos/audios/Voz 001.wav',
+    'ThalesSos/audios/Voz 002.wav',
 ]
 
 def home(request):
@@ -34,21 +33,7 @@ def home(request):
 
     return render(request, 'index.html', {'data': data, 'audio_paths': audio_paths, 'alert_message': alert_message})
 
-
-def transcribe_google(request):
-    if request.method == 'POST':
-        audio_file = request.FILES.get('audio_file')
-        if audio_file:
-            # Handle the uploaded audio file
-            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/Users/salomon/Desktop/imperial-data-403319-ab8beada07d0.json'
-            transcript = transcribe_audio(audio_file.read())
-            if transcript is not None:
-                return HttpResponse(f"Transcript: {transcript}")
-            else:
-                return HttpResponse("Transcription failed.")
-        else:
-            return HttpResponse("No audio file uploaded.")
-    return render(request, 'transcription_form.html')
-
 def administrador(request):
       return render(request, 'administrador.html')
+  
+  

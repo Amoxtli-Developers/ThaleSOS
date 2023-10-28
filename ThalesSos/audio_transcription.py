@@ -24,3 +24,4 @@ def transcribe_audio(audio_data):
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return None
+

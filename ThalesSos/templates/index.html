@@ -18,6 +18,10 @@
           opacity: 1;
         }
       }
+
+      .btn-interfaz:hover {
+        background-color: #04c4d9;
+      }
     </style>
   </head>
   <body>
@@ -71,7 +75,7 @@
 
     <div class="container-fluid mt-5">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-5">
           <div
             class="card"
             style="border-radius: 30px; border: 3px solid #242f73"
@@ -101,10 +105,18 @@
                 <audio id="audioPlayer" controls class="w-100">
                   Tu navegador no soporta el elemento audio.
                 </audio>
+
                 <button
                   type="submit"
-                  class="btn btn-primary"
+                  class="btn btn-block btn-interfaz"
                   onclick="playAudio()"
+                  style="
+                    border-radius: 30px;
+                    border: 3px solid #04c4d9;
+                    margin-top: 2rem;
+                    color: #242f73;
+                    font-weight: 500;
+                  "
                 >
                   Play
                 </button>
@@ -114,23 +126,28 @@
         </div>
 
         <!-- Columna de Speech to Text -->
-        <div class="col-md-6">
+        <div class="col-md-7">
           <div
             class="card"
             style="border-radius: 30px; border: 3px solid #242f73"
           >
             <div class="card-body">
-              <h5 class="card-title text-center">{{ data }}</h5>
+              <p class="card-title text-justify">
+                {{ data|default_if_none:"Placeholder Text" }}
+              </p>
             </div>
           </div>
         </div>
-
+      </div>
+      <div class="row" style="margin-top: 5rem">
         <!-- Columna de Alerta y Gráfica -->
-        <div class="col-md-3">
+        <div class="col-md-6">
           <div class="text-center">
             <div class="p-4 border rounded-circle">Gráfica de emociones</div>
           </div>
+        </div>
 
+        <div class="col-md-6">
           <!-- Parámetros de voz -->
           <ul class="list-group mt-3">
             <li class="list-group-item">Velocidad:</li>
@@ -139,15 +156,20 @@
           </ul>
 
           <!-- Botón Finalizar llamada -->
-          <div class="text-center mt-4">
-            <button
-              class="btn"
-              style="border-radius: 30px; border: 3px solid #04c4d9"
-            >
-              <span style="margin: 1rem">Finalizar llamada</span>
-            </button>
-          </div>
         </div>
+      </div>
+      <div class="text-center" style="margin-top: 5rem;">
+        <button
+          class="btn btn-interfaz"
+          style="
+            border-radius: 30px;
+            border: 3px solid #04c4d9;
+            color: #242f73;
+            font-weight: 500;
+          "
+        >
+          <span style="margin: 1rem">Finalizar llamada</span>
+        </button>
       </div>
     </div>
     <!-- Bootstrap Alert -->
