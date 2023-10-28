@@ -8,6 +8,7 @@
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     />
+    
 
     <style>
       @keyframes fadein {
@@ -149,7 +150,7 @@
                       font-weight: 500;
                     "
                   >
-                    Iniciar Dictado
+                    Llamar
                   </button>
                 </div>
                 <div class="col-md-6">
@@ -164,7 +165,7 @@
                       font-weight: 500;
                     "
                   >
-                    Detener Dictado
+                    Colgar
                   </button>
                 </div>
               </div>
@@ -191,6 +192,17 @@
           </div>
         </div>
       </div>
+      <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000" id="infoToast" style="position: absolute; top: 0; right: 0;">
+        <div class="toast-header">
+          <strong class="mr-auto">Notificación</strong>
+          <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="toast-body" id="toastContent">
+        </div>
+      </div>
+      
       <div class="row" style="margin-top: 5rem">
         <!-- Columna de Alerta y Gráfica -->
         <div class="col-md-6">
@@ -225,6 +237,26 @@
         </a>
       </div>
     </div>
+    <!-- Modal Bootstrap para mostrar la información -->
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="infoModalLabel">Información</h5>
+          </div>
+          <div class="modal-body" id="modalContent">
+            <!-- El contenido se insertará desde JavaScript -->
+          </div>
+          <div class="modal-footer" style="display: flex;">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Aceptar</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+
+    
     <!-- Bootstrap Alert -->
     <style>
       #keywordDetected {
@@ -266,18 +298,50 @@
 
     var highlightedText = fullTranscript + interimTranscript;
 
-    // Detectar palabras clave
-    var wordsToDetect = JSON.parse('{{ keywords_json|safe }}');
-    for (const word of wordsToDetect) {
-        highlightedText = highlightedText.replace(new RegExp("\\b" + word + "\\b", "gi"), function(match) {
-            return `<span style="background-color: yellow;">${match}</span>`;
-        });
+    // Asume que keywords_to_category ya ha sido insertado en el HTML como un objeto JavaScript
+var keywordsToCategory = JSON.parse('{{ keywords_to_category|safe }}');
+var categoryCounts = {};
+var seenWords = new Set();
+
+// Detectar palabras clave
+var wordsToDetect = JSON.parse('{{ keywords_json|safe }}');
+var categoryCounts = {};
+var seenWords = new Set();  // Conjunto para palabras clave únicas vistas
+
+for (const word of wordsToDetect) {
+    highlightedText = highlightedText.replace(new RegExp("\\b" + word + "\\b", "gi"), function(match) {
+        // Si la palabra coincide, tiene una categoría y no ha sido vista antes
+        const category = keywordsToCategory[word.toLowerCase()];
+        if (category && !seenWords.has(word.toLowerCase())) {
+            categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+            seenWords.add(word.toLowerCase());
+        }
+        return `<span style="background-color: yellow;">${match}</span>`;
+    });
+}
+
+// Encuentra la categoría con el mayor número de coincidencias
+var maxMatches = -1;
+var topCategory = null;
+for (const [category, count] of Object.entries(categoryCounts)) {
+    if (count > maxMatches) {
+        maxMatches = count;
+        topCategory = category;
     }
+}
 
-    document.getElementById("output").innerHTML = highlightedText;
+if(topCategory !== null && maxMatches == 1){
+  var message = nameToMessage[topCategory];
+  document.getElementById('toastContent').textContent = `Acción de acuerdo al contexto de la llamada: ${message}`;
+  $('#infoToast').toast('show');
+} else {
+  var message = nameToMessage[topCategory];
+}
+
+
+document.getElementById("output").innerHTML = highlightedText;
+
 };
-
-
         function startRecognition() {
           isListening = true;
           recognition.start();
@@ -286,6 +350,8 @@
         function stopRecognition() {
           isListening = false;
           recognition.stop();
+          const outputDiv = document.getElementById("output");
+          outputDiv.innerHTML = highlightKeywords(outputDiv.textContent);
         }
       } else {
         alert("Tu navegador no soporta el reconocimiento de voz.");
@@ -303,20 +369,55 @@
     </script>
     <script>
       document.addEventListener("DOMContentLoaded", function() {
-    const outputDiv = document.getElementById("output");
-    outputDiv.innerHTML = highlightKeywords(outputDiv.textContent);
-});
+         
+      });
 
     </script>
     <script>
-      function highlightKeywords(text) {
-    // Detectar palabras clave
+// Asume que keywords_to_category y name_to_message ya han sido insertados en el HTML como objetos JavaScript
+var keywordsToCategory = JSON.parse('{{ keywords_to_category|safe }}');
+var nameToMessage = JSON.parse('{{ name_to_message|safe }}');
+
+function highlightKeywords(text) {
     var wordsToDetect = JSON.parse('{{ keywords_json|safe }}');
+    var categoryCounts = {};
+    var seenWords = new Set();  // Conjunto para palabras clave únicas vistas
+
     for (const word of wordsToDetect) {
         text = text.replace(new RegExp("\\b" + word + "\\b", "gi"), function(match) {
+            const category = keywordsToCategory[word.toLowerCase()];
+            // Si la palabra coincide, tiene una categoría y no ha sido vista antes
+            if (category && !seenWords.has(word.toLowerCase())) {
+                categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+                seenWords.add(word.toLowerCase());  // Añadir la palabra al conjunto de palabras vistas
+            }
             return `<span style="background-color: yellow;">${match}</span>`;
         });
     }
+
+    // Encuentra la categoría con el mayor número de coincidencias
+    var maxMatches = -1;
+    var topCategory = null;
+    for (const [category, count] of Object.entries(categoryCounts)) {
+        if (count > maxMatches) {
+            maxMatches = count;
+            topCategory = category;
+        }
+    }
+
+    if (topCategory !== null) {
+        var message = nameToMessage[topCategory];
+        
+        // Establecer el contenido del modal
+        document.getElementById('modalContent').textContent = `Acción de acuerdo al contexto de la llamada: ${message}`;
+        
+        // Mostrar el modal
+        var infoModal = new bootstrap.Modal(document.getElementById('infoModal'));
+        infoModal.show();
+    }else{
+      document.getElementById('modalContent').textContent = `Palabra clave identificada`;
+    }
+
     return text;
 }
     </script>
@@ -324,5 +425,8 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- JS de Bootstrap 4.5.2 -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   </body>
 </html>
