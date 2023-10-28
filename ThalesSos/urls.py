@@ -2,11 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # Define the URL pattern for /transcribe
-    path('transcribe', views.transcribe_google, name='transcribe_google'),
-    # Add more URL patterns as needed
     path('administrador', views.administrador, name='administrador'),
-    path('home', views.home, name='home'),
+    path('', views.home, name='home'),
     path('delete_warning/<int:id>/', views.delete_warning, name='delete_warning'),
     path('delete_categorie/<int:id>/', views.delete_categorie, name='delete_categorie'),
     path('add_category/', views.add_category, name='add_category'),

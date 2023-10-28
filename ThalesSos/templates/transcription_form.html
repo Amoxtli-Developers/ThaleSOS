@@ -1,15 +1,53 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Audio Transcription</title>
-</head>
-<body>
-    <h1>Transcribe Audio</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <label for="audio_file">Choose an audio file:</label>
-        <input type="file" name="audio_file" accept=".wav, .mp3">
-        <input type="submit" value="Transcribe">
-    </form>
-</body>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grabación de Audio en Tiempo Real</title>
+  </head>
+  <body>
+    <h1>Grabación de Audio en Tiempo Real</h1>
+    <p>Haz clic en el botón "Grabar" para comenzar la grabación.</p>
+
+    <button id="startRecording">Grabar</button>
+    <button id="stopRecording" disabled>Detener</button>
+    <audio id="audioPlayback" controls></audio>
+
+    <div id="transcription"></div>
+
+    <script>
+      const startRecordingButton = document.getElementById("startRecording");
+      const stopRecordingButton = document.getElementById("stopRecording");
+      const audioPlayback = document.getElementById("audioPlayback");
+      const transcriptionDiv = document.getElementById("transcription");
+
+      let mediaRecorder;
+      let audioChunks = [];
+
+      let socket = new WebSocket("ws://tu-servidor-websocket-url/"); // Reemplaza con la URL de tu servidor WebSocket
+
+      // Resto del código (misma configuración) ...
+
+      // Cuando obtienes un nuevo resultado de transcripción, lo envías al servidor WebSocket
+      function handleTranscriptionResult(result) {
+        socket.send(JSON.stringify({ transcription: result }));
+      }
+
+      // Cuando recibes una transcripción a través de WebSocket, la agregas a la página
+      socket.addEventListener("message", function (event) {
+        const data = JSON.parse(event.data);
+        if (data.transcription) {
+          transcriptionDiv.innerHTML += data.transcription + "<br>";
+        }
+      });
+    </script>
+    <script>
+      const socket = new WebSocket("ws://tu-servidor/websocket/ruta/"); // Reemplaza con la URL correcta
+      socket.onmessage = function (event) {
+        // Manejar la transcripción recibida desde el servidor
+        const transcription = JSON.parse(event.data).message;
+        // Hacer algo con la transcripción, por ejemplo, mostrarla en tu página HTML.
+      };
+    </script>
+  </body>
 </html>
