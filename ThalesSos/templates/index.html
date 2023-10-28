@@ -37,27 +37,13 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a
-        class="navbar-brand"
-        href="#"
-        style="
-          font-family: Poppins;
-          font-weight: 700;
-          font-size: 45px;
-          color: #242f73;
-        "
-        >Thales<span
-          style="
-            font-family: Poppins;
-            font-weight: 700;
-            font-size: 30px;
-            color: #04c4d9;
-          "
-        >
-          SOS</span
-        ></a
-      >
-    </nav>
+      <a class="navbar-brand" href="#" style="font-family: Poppins; font-weight: 700; font-size: 45px; color: #242f73;">
+          Thales
+          <span style="font-family: Poppins; font-weight: 700; font-size: 30px; color: #04c4d9;">SOS</span>
+      </a>
+      <a class="btn btn-primary ml-auto" type="button" href="{% url 'administrador' %}">Administrar contenido</a>
+  </nav>
+  
     {% if alert_message %}
     <div
       class="alert alert-danger alert-dismissible fade show"
@@ -150,7 +136,7 @@
               >
                 {{ data }}
               </div>
-              <div class="row">
+              <div class="row pt-3">
                 <div class="col-md-6">
                   <button
                     onclick="startRecognition()"
@@ -180,8 +166,26 @@
                   >
                     Colgar
                   </button>
+                  
+                  
+                  
                 </div>
               </div>
+              <div class="row pt-5">
+                <div class="col-4" style="display: flex; align-items: center; justify-content: center;">
+                    <span style="display: inline-block; width: 10px; height: 10px; background-color: green; border-radius: 50%; margin-right: 5px;"></span>
+                    <p style="color: green; font-size: 12px; display: inline-block;">Color verde: Relación con ambulancia</p>
+                </div>
+                <div class="col-4" style="display: flex; align-items: center; justify-content: center;">
+                    <span style="display: inline-block; width: 10px; height: 10px; background-color: yellow; border-radius: 50%; margin-right: 5px;"></span>
+                    <p style="color: yellow; font-size: 12px; display: inline-block; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">Color amarillo: Relación con policía</p>
+                </div>
+                <div class="col-4" style="display: flex; align-items: center; justify-content: center;">
+                    <span style="display: inline-block; width: 10px; height: 10px; background-color: blue; border-radius: 50%; margin-right: 5px;"></span>
+                    <p style="color: blue; font-size: 12px; display: inline-block;">Color azul: Relación con bomberos</p>
+                </div>
+            </div>
+            
             </div>
             <div
               class="modal fade"
@@ -382,11 +386,11 @@ for (const word of wordsToDetect) {
             seenWords.add(word.toLowerCase());
         }
         if (category == 'pop1'){
-          return `<span style="background-color: green; color: white;">${match}</span>`;
+          return `<span style="background-color: green; color: white; font-weight: bold;">${match}</span>`;
         }else if (category == 'pop2'){
-              return `<span style="background-color: blue; color: white;">${match}</span>`;
+              return `<span style="background-color: blue; color: white; font-weight: bold;">${match}</span>`;
             }
-        return `<span style="background-color: yellow;">${match}</span>`;
+        return `<span style="background-color: yellow; font-weight: bold;">${match}</span>`;
     });
 }
 
@@ -400,7 +404,7 @@ for (const [category, count] of Object.entries(categoryCounts)) {
     }
 }
 
-if(topCategory !== null && maxMatches == 1){
+if(topCategory !== null && maxMatches >= 1){
   var message = nameToMessage[topCategory];
   document.getElementById('toastContent').textContent = `Acción de acuerdo al contexto de la llamada: ${message}`;
   $('#infoToast').toast('show');
@@ -461,11 +465,11 @@ function highlightKeywords(text) {
                 seenWords.add(word.toLowerCase());  // Añadir la palabra al conjunto de palabras vistas
             }
             if (category == 'pop1'){
-              return `<span style="background-color: green; color: white;">${match}</span>`;
+              return `<span style="background-color: green; color: white; font-weight: bold;">${match}</span>`;
             } else if (category == 'pop2'){
-              return `<span style="background-color: blue; color: white;">${match}</span>`;
+              return `<span style="background-color: blue; color: white; font-weight: bold;">${match}</span>`;
             }
-            return `<span style="background-color: yellow;">${match}</span>`;
+            return `<span style="background-color: yellow; font-weight: bold;">${match}</span>`;
         });
     }
 
