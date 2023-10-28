@@ -17,3 +17,9 @@ def transcribe_google(request):
         else:
             return HttpResponse("No audio file uploaded.")
     return render(request, 'transcription_form.html')
+
+def administrador(request):
+      return render(request, 'administrador.html')
+
+def home(request):
+      return render(request, 'home.html')
