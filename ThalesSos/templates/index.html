@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
   <head>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -137,7 +140,14 @@
           >
             <div class="card-body">
               <h5 class="card-title text-center">Dictado de Voz</h5>
-              <div id="output" class="form-control" contenteditable="false" style="white-space: pre-wrap; min-height: 100px; height: auto; ">{{ data }}</div>
+              <div
+                id="output"
+                class="form-control"
+                contenteditable="false"
+                style="white-space: pre-wrap; min-height: 100px; height: auto"
+              >
+                {{ data }}
+              </div>
               <div class="row">
                 <div class="col-md-6">
                   <button
@@ -171,12 +181,25 @@
                 </div>
               </div>
             </div>
-            <div class="modal fade" id="keywordModal" tabindex="-1" aria-labelledby="keywordModalLabel" aria-hidden="true">
+            <div
+              class="modal fade"
+              id="keywordModal"
+              tabindex="-1"
+              aria-labelledby="keywordModalLabel"
+              aria-hidden="true"
+            >
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="keywordModalLabel">Palabra clave detectada</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <h5 class="modal-title" id="keywordModalLabel">
+                      Palabra clave detectada
+                    </h5>
+                    <button
+                      type="button"
+                      class="close"
+                      data-dismiss="modal"
+                      aria-label="Close"
+                    >
                       <span aria-hidden="true">&times;</span>
                     </button>
                   </div>
@@ -184,12 +207,17 @@
                     Palabra clave: <span id="keywordDetected"></span>
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-dismiss="modal"
+                    >
+                      Cerrar
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
-            
           </div>
         </div>
       </div>
@@ -198,13 +226,48 @@
         <div class="col-md-6">
           <div class="text-center">
             <div class="p-4 border rounded-circle">Gráfica de emociones</div>
+            <div id="chart_div"></div>
           </div>
         </div>
 
         <div class="col-md-6">
           <!-- Parámetros de voz -->
           <ul class="list-group mt-3">
-            <li class="list-group-item">Velocidad:</li>
+            <script type="text/javascript">
+              google.charts.load("current", { packages: ["corechart"] });
+              google.charts.setOnLoadCallback(drawChart);
+
+              function drawChart() {
+                var variable_y = JSON.parse("{{ variable_y|escapejs }}");
+                var variable_x = JSON.parse("{{ variable_x|escapejs }}");
+
+                var data = google.visualization.arrayToDataTable([
+                  ["Categoría", "Valor"],
+                  [variable_x[0], variable_y[0]],
+                  [variable_x[1], variable_y[1]],
+                  [variable_x[2], variable_y[2]],
+                  // Agrega más categorías y valores según sea necesario
+                ]);
+
+                var options = {
+                  title: "Mi Gráfico",
+                  bars: "horizontal", // Gráfica de barras horizontales
+                  bar: { groupWidth: "80%" }, // Ancho de las barras
+                  borderRadius: 10, // Radio de borde para redondear las esquinas de las barras
+                  // Resto de las opciones
+                };
+
+                var chart = new google.visualization.BarChart(
+                  document.getElementById("chart_div")
+                );
+
+                chart.draw(data, options);
+              }
+            </script>
+
+            <li class="list-group-item">
+              Velocidad:<a>{{variable_y}}{{variable_x}}</a>
+            </li>
             <li class="list-group-item">Tono</li>
             <li class="list-group-item">{{data_emotion}}</li>
           </ul>
@@ -230,10 +293,9 @@
     <!-- Bootstrap Alert -->
     <style>
       #keywordDetected {
-    color: red;
-    font-weight: bold;
-}
-
+        color: red;
+        font-weight: bold;
+      }
     </style>
     <script>
       // Comprueba si el navegador soporta el reconocimiento de voz
@@ -254,31 +316,33 @@
 
         let fullTranscript = ""; // Almacena la transcripción completa
 
-        recognition.onresult = function(event) {
-    let interimTranscript = ''; 
+        recognition.onresult = function (event) {
+          let interimTranscript = "";
 
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-        const transcript = event.results[i][0].transcript;
-        if (event.results[i].isFinal) {
-            fullTranscript += transcript + ' ';
-        } else {
-            interimTranscript += transcript;
-        }
-    }
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            const transcript = event.results[i][0].transcript;
+            if (event.results[i].isFinal) {
+              fullTranscript += transcript + " ";
+            } else {
+              interimTranscript += transcript;
+            }
+          }
 
-    var highlightedText = fullTranscript + interimTranscript;
+          var highlightedText = fullTranscript + interimTranscript;
 
-    // Detectar palabras clave
-    var wordsToDetect = JSON.parse('{{ keywords_json|safe }}');
-    for (const word of wordsToDetect) {
-        highlightedText = highlightedText.replace(new RegExp("\\b" + word + "\\b", "gi"), function(match) {
-            return `<span style="background-color: yellow;">${match}</span>`;
-        });
-    }
+          // Detectar palabras clave
+          var wordsToDetect = JSON.parse("{{ keywords_json|safe }}");
+          for (const word of wordsToDetect) {
+            highlightedText = highlightedText.replace(
+              new RegExp("\\b" + word + "\\b", "gi"),
+              function (match) {
+                return `<span style="background-color: yellow;">${match}</span>`;
+              }
+            );
+          }
 
-    document.getElementById("output").innerHTML = highlightedText;
-};
-
+          document.getElementById("output").innerHTML = highlightedText;
+        };
 
         function startRecognition() {
           isListening = true;
@@ -301,26 +365,27 @@
           audioPlayer.play(); // Play the audio
         }
       }
-
     </script>
     <script>
-      document.addEventListener("DOMContentLoaded", function() {
-    const outputDiv = document.getElementById("output");
-    outputDiv.innerHTML = highlightKeywords(outputDiv.textContent);
-});
-
+      document.addEventListener("DOMContentLoaded", function () {
+        const outputDiv = document.getElementById("output");
+        outputDiv.innerHTML = highlightKeywords(outputDiv.textContent);
+      });
     </script>
     <script>
       function highlightKeywords(text) {
-    // Detectar palabras clave
-    var wordsToDetect = JSON.parse('{{ keywords_json|safe }}');
-    for (const word of wordsToDetect) {
-        text = text.replace(new RegExp("\\b" + word + "\\b", "gi"), function(match) {
-            return `<span style="background-color: yellow;">${match}</span>`;
-        });
-    }
-    return text;
-}
+        // Detectar palabras clave
+        var wordsToDetect = JSON.parse("{{ keywords_json|safe }}");
+        for (const word of wordsToDetect) {
+          text = text.replace(
+            new RegExp("\\b" + word + "\\b", "gi"),
+            function (match) {
+              return `<span style="background-color: yellow;">${match}</span>`;
+            }
+          );
+        }
+        return text;
+      }
     </script>
     <!-- Scripts necesarios para Bootstrap -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

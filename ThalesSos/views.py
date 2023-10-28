@@ -39,12 +39,15 @@ def home(request):
             dataGraf = [top1, top2, top3]
             print(dataGraf)
 
-            labels = [top1['label'], top2['label'], top3['label']]
+            labels= [top1['label'], top2['label'], top3['label']]
             scores = [top1['score'], top2['score'], top3['score']]
 
             print(labels)
             print(scores)
-
+            variable_x = labels
+            variable_y = scores
+            variable_x = json.dumps(variable_x)
+            print("despues de  dumps",variable_x)
             
 
              
@@ -60,6 +63,12 @@ def home(request):
                 alert_message = "Transcription failed."
         else:
             alert_message = "Ningun archivo seleccionado"
+    else:
+    
+        variable_x = []  # Provide default values for variable_x and variable_y
+        variable_y = []
+        variable_x = json.dumps(variable_x)
+        print("despues de  dumps",variable_x)
     # Obtener todas las palabras clave
     keywords = Warning.objects.values_list('keywords', flat=True)
     
@@ -70,7 +79,9 @@ def home(request):
     'keywords_json': json.dumps(list(keywords)),
     'data_emotion': data_emotion,
     'model_init': model_init,
-    'dataGraf': dataGraf
+    'dataGraf': dataGraf,
+    'variable_x': variable_x,
+    'variable_y': variable_y,
 }
 
     return render(request, 'index.html', context)
