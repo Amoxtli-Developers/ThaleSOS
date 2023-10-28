@@ -12,6 +12,7 @@ audio_paths = [
     'ThalesSos/audios/Voz 001.wav',
     'ThalesSos/audios/Voz 002.wav',
     'ThalesSos/audios/Tecnológico de Monterrey - Campus Ciudad de México 2.wav',
+    'ThalesSos/audios/Tecnológico de Monterrey - Campus Ciudad de México 4.wav'
 ]
 
 def home(request):
@@ -37,13 +38,19 @@ def home(request):
             
     # Obtener todas las palabras clave
     keywords = Warning.objects.values_list('keywords', flat=True)
+    warnings = Warning.objects.all().select_related('category')
+    categories = Categorie.objects.all()
+    name_to_message = {category.name: category.message for category in categories}
+    keywords_to_category = {warning.keywords: warning.category.name for warning in warnings}
     
     context = {
     'data': data,
     'audio_paths': audio_paths,
     'alert_message': alert_message,
-    'keywords_json': json.dumps(list(keywords))
-}
+    'keywords_json': json.dumps(list(keywords)),
+    'keywords_to_category': json.dumps(keywords_to_category),
+    'name_to_message': json.dumps(name_to_message)
+    }
 
     return render(request, 'index.html', context)
 
