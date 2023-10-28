@@ -135,9 +135,7 @@
           >
             <div class="card-body">
               <h5 class="card-title text-center">Dictado de Voz</h5>
-              <textarea id="output" class="form-control" rows="8" readonly>
-{{ data }}</textarea
-              >
+              <div id="output" class="form-control" contenteditable="false" style="white-space: pre-wrap; min-height: 100px; height: auto; ">{{ data }}</div>
               <div class="row">
                 <div class="col-md-6">
                   <button
@@ -171,6 +169,25 @@
                 </div>
               </div>
             </div>
+            <div class="modal fade" id="keywordModal" tabindex="-1" aria-labelledby="keywordModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="keywordModalLabel">Palabra clave detectada</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    Palabra clave: <span id="keywordDetected"></span>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
           </div>
         </div>
       </div>
@@ -208,7 +225,13 @@
       </div>
     </div>
     <!-- Bootstrap Alert -->
+    <style>
+      #keywordDetected {
+    color: red;
+    font-weight: bold;
+}
 
+    </style>
     <script>
       // Comprueba si el navegador soporta el reconocimiento de voz
       window.SpeechRecognition =
@@ -228,21 +251,31 @@
 
         let fullTranscript = ""; // Almacena la transcripción completa
 
-        recognition.onresult = function (event) {
-          let interimTranscript = ""; // Almacena la transcripción temporal
+        recognition.onresult = function(event) {
+    let interimTranscript = ''; 
 
-          for (let i = event.resultIndex; i < event.results.length; i++) {
-            const transcript = event.results[i][0].transcript;
-            if (event.results[i].isFinal) {
-              fullTranscript += transcript + " "; // Añade a la transcripción completa
-            } else {
-              interimTranscript += transcript; // Añade a la transcripción temporal
-            }
-          }
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+            fullTranscript += transcript + ' ';
+        } else {
+            interimTranscript += transcript;
+        }
+    }
 
-          document.getElementById("output").textContent =
-            fullTranscript + interimTranscript; // Muestra la combinación
-        };
+    var highlightedText = fullTranscript + interimTranscript;
+
+    // Detectar palabras clave
+    var wordsToDetect = JSON.parse('{{ keywords_json|safe }}');
+    for (const word of wordsToDetect) {
+        highlightedText = highlightedText.replace(new RegExp("\\b" + word + "\\b", "gi"), function(match) {
+            return `<span style="background-color: yellow;">${match}</span>`;
+        });
+    }
+
+    document.getElementById("output").innerHTML = highlightedText;
+};
+
 
         function startRecognition() {
           isListening = true;
@@ -265,8 +298,27 @@
           audioPlayer.play(); // Play the audio
         }
       }
-    </script>
 
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+    const outputDiv = document.getElementById("output");
+    outputDiv.innerHTML = highlightKeywords(outputDiv.textContent);
+});
+
+    </script>
+    <script>
+      function highlightKeywords(text) {
+    // Detectar palabras clave
+    var wordsToDetect = JSON.parse('{{ keywords_json|safe }}');
+    for (const word of wordsToDetect) {
+        text = text.replace(new RegExp("\\b" + word + "\\b", "gi"), function(match) {
+            return `<span style="background-color: yellow;">${match}</span>`;
+        });
+    }
+    return text;
+}
+    </script>
     <!-- Scripts necesarios para Bootstrap -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>

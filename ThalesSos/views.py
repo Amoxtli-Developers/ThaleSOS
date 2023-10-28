@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
+import json
 from .audio_transcription import transcribe_audio  # Importando la función de transcripción
 import os  # Import the os module
 from .models import Categorie, Warning
@@ -10,6 +11,7 @@ import base64
 audio_paths = [
     'ThalesSos/audios/Voz 001.wav',
     'ThalesSos/audios/Voz 002.wav',
+    'ThalesSos/audios/Tecnológico de Monterrey - Campus Ciudad de México 2.wav',
 ]
 
 def home(request):
@@ -19,7 +21,7 @@ def home(request):
     if request.method == 'POST':
         selected_audio_path = request.POST.get('selected_audio')
         if selected_audio_path:
-            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/Users/salomon/Desktop/imperial-data-403319-ab8beada07d0.json'
+            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/Users/sofiadonlucas/Downloads/imperial-data-403319-ab8beada07d0.json'
 
             with open(selected_audio_path, 'rb') as audio_file:
                 # Encode the audio data as base64
@@ -32,8 +34,18 @@ def home(request):
                 alert_message = "Transcription failed."
         else:
             alert_message = "Ningun archivo seleccionado"
+            
+    # Obtener todas las palabras clave
+    keywords = Warning.objects.values_list('keywords', flat=True)
+    
+    context = {
+    'data': data,
+    'audio_paths': audio_paths,
+    'alert_message': alert_message,
+    'keywords_json': json.dumps(list(keywords))
+}
 
-    return render(request, 'index.html', {'data': data, 'audio_paths': audio_paths, 'alert_message': alert_message})
+    return render(request, 'index.html', context)
 
 def administrador(request):
     categories = Categorie.objects.all()
